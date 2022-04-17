@@ -1,6 +1,6 @@
 def solution(n, times):
     start = 0
-    end = max(times) * n
+    end = min(times) * n
     while start <= end :
         mid = (start+end)//2
         people = 0
