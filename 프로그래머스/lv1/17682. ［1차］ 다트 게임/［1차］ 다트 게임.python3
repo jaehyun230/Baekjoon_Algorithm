@@ -1,0 +1,36 @@
+def bonus_cal(score, parameter) :
+    if parameter == 'S' :
+        return int(score)
+    elif parameter == 'D' :
+        return int(score**2)
+    elif parameter == 'T' :
+        return int(score**3)
+
+def solution(dartResult):
+    bonus = []
+    score = []
+    stack = []
+    
+    for i in dartResult :
+        if i == 'S' or i == 'D' or i == 'T' :
+            bonus.append(i)
+    
+    dartResult = dartResult.replace('S', ' ').replace('D', ' ').replace('T', ' ')
+    score = dartResult.replace('*', '* ').replace('#', '# ').split()
+    
+    count = 0
+    for i in score :
+        if i !="*" and i !="#" :
+            stack.append(bonus_cal(int(i), bonus[count]))
+            count +=1
+        elif i == "*" :
+            if len(stack) >=2 :
+                stack[-1] *=2
+                stack[-2] *=2
+            else :
+                stack[-1] *=2
+        elif i == "#" :
+                stack[-1] *=-1
+                
+    answer = sum(stack)
+    return answer
