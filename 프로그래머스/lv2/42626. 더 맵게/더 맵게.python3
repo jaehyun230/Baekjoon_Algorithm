@@ -1,24 +1,9 @@
-import heapq
-
+from heapq import heapify, heappush, heappop
 def solution(scoville, K):
-    answer = 0
-    heap = []
-    for i in scoville :
-        heapq.heappush(heap, i)
-    
-    while len(heap) >= 2 :
-        scov = heapq.heappop(heap)
-        
-        if scov >= K :
-            break
-        
-        if scov < K :
-            scov2 = heapq.heappop(heap)
-            heapq.heappush(heap, scov+(scov2*2))
-            answer +=1
-    
-    low = heapq.heappop(heap)
-    if low < K :
-        return -1
-    
-    return answer
+    heapify(scoville)
+    for i in range(1000000):
+        try:
+            heappush(scoville, heappop(scoville)+(heappop(scoville)*2))
+            if scoville[0] >= K: return i+1
+        except:
+            return -1
