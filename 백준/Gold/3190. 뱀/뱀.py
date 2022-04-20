@@ -1,5 +1,6 @@
 from collections import deque
-
+import sys
+input = sys.stdin.readline
 #판 크기
 n = int(input())
 #사과 개수
@@ -61,12 +62,12 @@ while True :
   #자기 몸통에 부딛힐 경우
   elif graph[head[0]][head[1]] == 1 :
     break
-    
+  #빈공간으로 이동할 경우
   elif graph[head[0]][head[1]] == 0 :
     graph[head[0]][head[1]] = 1
     tail = snake.popleft()
     graph[tail[0]][tail[1]] = 0
-    
+  #사과를 먹은 경우 
   elif graph[head[0]][head[1]] == 2 :
     graph[head[0]][head[1]] = 1
   
