@@ -6,6 +6,7 @@ def solution(triangle):
     dist_triangle = copy.deepcopy(triangle)
     q= deque()
     q.append((0, 0))
+    # 이동가능 경우
     dx = [0, 1]
     dy = [1, 1]
     while q :
@@ -13,11 +14,13 @@ def solution(triangle):
         for i in range(len(dx)) :
             mx = x+dx[i]
             my = y+dy[i]
+            # 삼각형 바닥 도달
             if my == len(triangle) :
                 break
+            # 기존 비용보다 높게 측정시만 queue append
             if dist_triangle[my][mx] < dist_triangle[y][x] + triangle[my][mx] :
                 dist_triangle[my][mx] = dist_triangle[y][x] + triangle[my][mx]
                 q.append((my, mx))
-
+    # 바닥 값중 최대값
     answer = max(dist_triangle[len(triangle)-1])
     return answer
