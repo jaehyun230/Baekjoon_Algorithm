@@ -1,0 +1,36 @@
+import heapq
+
+def solution(n, s, a, b, fares):
+    graph = [[] for _ in range(n+1)]
+    for f in fares:
+        x, y, z = f[0], f[1], f[2]
+        graph[x].append((y,z))
+        graph[y].append((x,z))
+
+    def dijkstra(n, start, end):
+        distance = [20000000 for _ in range(n+1)]
+        q = []
+        heapq.heappush(q, (0, start))
+        distance[start] = 0
+        while q:
+            dist, now = heapq.heappop(q)
+            if distance[now] < dist:
+                continue
+            for i in graph[now]:
+                cost = dist + i[1]
+                if cost < distance[i[0]]:
+                    distance[i[0]] = cost
+                    heapq.heappush(q, (cost, i[0]))
+        return distance[end]
+
+    result = int(1e9)
+    for p in range(1, n+1):
+        if p != s:
+            s_to_p = dijkstra(n,s,p)
+            p_to_a = dijkstra(n,p,a)
+            p_to_b = dijkstra(n,p,b)
+            result = min(s_to_p+p_to_a+p_to_b, result)
+        else:
+            result = min(dijkstra(n,s,a)+dijkstra(n,s,b), result)
+
+    return result
