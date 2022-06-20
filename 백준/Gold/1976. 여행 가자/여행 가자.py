@@ -11,6 +11,7 @@ graph = [[]*(n+1) for _ in range(n+1)]
 
 for i in range (n) :
   data = list(map(int, input().split()))
+  graph[i+1] 
   for k in range (n) :
     if data[k] == 1 :
       graph[i+1].append(k+1)
