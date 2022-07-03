@@ -1,4 +1,4 @@
-from collections import deque
+import heapq
 import sys
 
 input = sys.stdin.readline
@@ -16,12 +16,13 @@ while True :
   graph = [ list(map(int, input().split())) for _ in range(n)]
   INF = int(1e9)
   cost = [[INF] * n for _ in range(n)]
-  q = deque()
+  q = []
   # 시작부분
-  q.append((0, 0, graph[0][0]))
+  heapq.heappush(q, (graph[0][0], 0, 0 ))
   cost[0][0] = graph[0][0]
+  flag = False
   while q :
-    x, y, c = q.popleft()
+    c, x, y = heapq.heappop(q)
     
     for i in range (4) :
       mx = x+dx[i]
@@ -29,6 +30,9 @@ while True :
 
       if 0 <= mx < n and 0 <= my < n and c+graph[mx][my] < cost[mx][my] :
         cost[mx][my] = c+graph[mx][my]
-        q.append((mx, my, c+graph[mx][my]))
+        heapq.heappush(q, (c+graph[mx][my], mx, my))
 
+    if cost[n-1][n-1] != INF :
+      break
+    
   print(f'Problem {problem_num}: {cost[n-1][n-1]}')
