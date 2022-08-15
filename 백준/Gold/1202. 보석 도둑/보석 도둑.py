@@ -5,29 +5,26 @@ input = sys.stdin.readline
 
 n, k = map(int, input().split())
 
-q = []
+jewel = []
 
 for _ in range (n) :
-  x, y = map(int, input().split())
-  heapq.heappush(q, ((x, y)))
+  a, b = map(int, input().split())
+  heapq.heappush(jewel, (a, b))
 
-#가방 무게저장
 bag = [int(input()) for _ in range(k)]
-
 bag.sort()
 
-temp = []
-
 answer = 0
+temp = []
 for w in bag :
-  
-  while q and w >= q[0][0] :
-    weight, price = heapq.heappop(q)
-    heapq.heappush(temp, -price)
-    
+
+  while jewel and w >= jewel[0][0] :
+    weight, price = heapq.heappop(jewel)
+    heapq.heappush(temp, (-price))
+
   if temp :
     answer -= heapq.heappop(temp)
-  elif not q:
+  elif not jewel :
     break
 
 print(answer)
