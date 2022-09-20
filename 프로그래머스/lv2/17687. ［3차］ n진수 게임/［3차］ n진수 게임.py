@@ -15,7 +15,7 @@ def solution(n, t, m, p):
         if num == 0 :
             return '0'
         while num > 0 :
-            result += numbers[num%n]
+            result = numbers[num%n] +result
             num = num // n
         
         return result
@@ -26,7 +26,7 @@ def solution(n, t, m, p):
         order -=1
         
         if order == 0 :
-            answer += now_num[counter]
+            answer += now_num[len(now_num)-counter-1]
             order = m
             t -=1
         
