@@ -1,40 +1,43 @@
 from collections import deque
 
-n, m, start = map(int, input().split())
-graph = [[] for i in range(n+1)]
-
-for _ in range (m) :
-  a,b = map(int, input().split())
-  graph[a].append(b)
-  graph[b].append(a)
-
-#edge 가는방향 오름차순 정렬
-for i in range(1, n+1):
-    graph[i].sort()
-
-def dfs(start) :
-  print(start, end = " ")
-  visited[start] = 1
-  for i in graph[start] :
-    if visited[i] == 0 :
+def dfs(s) :
+  print(s, end = " ")
+  visited[s] = 1
+  for i in graph[s] :
+    if visited[i] == False :
       dfs(i)
- 
-def bfs(graph, start) : 
-  q = deque()
-  q.append(start)
-  visited = [0] * (n+1)
-  visited[start] = 1
+  
+  
+  return
 
+def bfs(s) :
+  q = deque()
+  q.append(s)
+  visited = [False] * (n+1)
+  visited[s] = True
   while q :
     now = q.popleft()
     print(now, end = " ")
-    for i in graph[now] :
-      if visited[i] == 0 :
-        visited[i] = 1
-        q.append(i)
+    for go in graph[now] :
+      if visited[go] == False :
+        q.append(go)
+        visited[go] = True
 
-visited = [0] * (n+1)
-dfs(start)
+  return
+    
+
+n, m, v = map(int, input().split())
+
+graph = [[] for _ in range(n+1)]
+
+for _ in range(m) :
+  a, b = map(int, input().split())
+  graph[a].append(b)
+  graph[b].append(a)
+for i in range(1, n+1) :
+  graph[i].sort()
+
+visited = [False] * (n+1)
+dfs(v)
 print()
-bfs(graph, start)
-
+bfs(v)
