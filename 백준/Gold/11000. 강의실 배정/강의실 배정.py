@@ -1,31 +1,23 @@
-import sys
 import heapq
-
-input = sys.stdin.readline
 
 n = int(input())
 
-lesson = []
+q = []
 
-for _ in range (n) :
-  x, y = map(int, input().split())
-  heapq.heappush(lesson, (x, y))
+for _ in range(n) :
+  start, end = map(int, input().split())
+  heapq.heappush(q, [start, end])
 
-room = []
+q2 = []
+
 answer = 0
-while lesson :
-  start, end = heapq.heappop(lesson)
-  flag = False
-  if room :
-    time = heapq.heappop(room)
-    if time <= start :
-        flag = True
-        heapq.heappush(room, end)
+while q :
+  s, e = heapq.heappop(q)
+  while q2 :
+    if q2[0] <= s :
+      heapq.heappop(q2)
     else :
-      heapq.heappush(room, time)
-      
-  if flag == False :
-    heapq.heappush(room, end)
-    answer +=1
-
+      break
+  heapq.heappush(q2, e)
+  answer = max(answer, len(q2))
 print(answer)
