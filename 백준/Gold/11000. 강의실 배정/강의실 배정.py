@@ -1,12 +1,14 @@
 import heapq
+import sys
 
+input = sys.stdin.readline
 n = int(input())
 
 q = []
 
 for _ in range(n) :
   start, end = map(int, input().split())
-  heapq.heappush(q, [start, end])
+  heapq.heappush(q, (start, end))
 
 q2 = []
 
