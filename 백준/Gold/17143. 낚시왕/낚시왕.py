@@ -1,3 +1,5 @@
+# 낚시왕
+#행 열 상어 수
 n, m, k = map(int, input().split())
 
 shark = []
@@ -42,9 +44,8 @@ def fight(n1, n2) :
 def update(r, c, s, d, z, idx) :
     shark[idx] = [r, c, s, d, z, idx]
 
-def shark_move() :
-    global graph
-
+def shark_move(graph) :
+   
     new_graph = [
     [[] for _ in range(m)] for _ in range(n)]
 
@@ -79,6 +80,8 @@ def shark_move() :
                 new_graph[r][c].append(idx)
 
     graph = new_graph
+    
+    return graph
 
 
 start = 0
@@ -95,7 +98,7 @@ while start < m :
                 shark_alive[shark_num] = False
                 break
 
-    shark_move()
+    graph = shark_move(graph)
     start +=1
 
 print(answer)
