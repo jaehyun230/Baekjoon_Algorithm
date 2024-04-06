@@ -1,71 +1,102 @@
-import sys
 from collections import deque
 
-input = sys.stdin.readline
-
-# 먹을 수 있는 물고기가 1마리라면, 그 물고기를 먹으러 간다.
-# 먹을 수 있는 물고기가 1마리보다 많다면, 거리가 가장 가까운 물고기를 먹으러 간다.
-
+# 아기 상어
+# 판 크기
 n = int(input())
+
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+fishes = []
 graph = []
-for _ in range(n):
-    graph.append(list(map(int,input().split())))
 
+#상어 현재 상태 위치 크기 필요먹이
+shark = [-1, -1, 2, 2]
 
-dx = [0,0,1,-1]
-dy = [1,-1,0,0]
-cnt = 0
-x,y,size = 0,0,2
-#상어위치
-for i in range(n):
-    for j in range(n):
-        if graph[i][j] == 9:
-            x = i
-            y = j
+for _ in range(n) :
+    graph.append(list(map(int, input().split())))
 
-def biteFish(x,y,shark_size):
-    distance = [[0] * n for _ in range(n)]
-    visited = [[0] * n for _ in range(n)]
-    # 거리는 아기 상어가 있는 칸에서 물고기가 있는 칸으로 이동할 때, 지나야하는 칸의 개수의 최솟값이다. (bfs사용)
+time = 0
+
+# 상어 시작위치, 물고기 위치 추가
+for i in range(n) :
+    for j in range(n) :
+        if graph[i][j] == 9 :
+            #상어 위치 업데이트
+            shark[0] = i
+            shark[1] = j
+            graph[i][j] = 0
+        elif graph[i][j] != 0 :
+            fishes.append((i, j, graph[i][j]))
+
+fishes.sort()
+
+#살아 있는 물고기 체크
+aliive_fishes = [True]*len(fishes)
+
+def find_eat() :
+    x, y, size, need_eat = shark
+
+    distance = 1000
+    number_fish = -1
+    find_map = go_eat((x, y))
+
+    for idx, fish in enumerate(fishes) :
+        x2, y2, size2 = fish
+        if aliive_fishes[idx] == True :
+            if size > size2 :
+                dis = find_map[x2][y2]
+                if dis < distance :
+                    distance = dis
+                    number_fish = idx
+
+    return (number_fish, distance)
+
+def go_eat(start) :
     q = deque()
-    q.append((x,y))
-    visited[x][y] = 1
-    temp = []
-    while q:
-        cur_x,cur_y = q.popleft()
-        for i in range(4):
-            nx = cur_x + dx[i]
-            ny = cur_y + dy[i]
-            if 0<= nx < n and 0<= ny < n and visited[nx][ny] == 0:
-                if graph[nx][ny] <= shark_size:
-                    q.append((nx,ny))
-                    visited[nx][ny] = 1
-                    distance[nx][ny] = distance[cur_x][cur_y] + 1
-                    if graph[nx][ny] < shark_size and graph[nx][ny] != 0:
-                        temp.append((nx,ny,distance[nx][ny]))
+    a, b = start
+    q.append((a, b, 0))
+    visited = [[False]*n for _ in range(n)]
+    maps = [[1000]*n for _ in range(n)]
+    visited[a][b] = True
+    distance = 1000
+    while q :
+        x, y, d = q.popleft()
+        # print("now", x, y, d)
 
-# 거리가 가까운 물고기가 많다면, 가장 위에 있는 물고기, 그러한 물고기가 여러마리라면, 가장 왼쪽에 있는 물고기를 먹는다.
-    return sorted(temp,key=lambda x: (-x[2],-x[0],-x[1]))
+        for i in range(4) :
+            mx = x + dx[i]
+            my = y + dy[i]
+            if 0 <= mx < n and 0 <= my < n and visited[mx][my] == False and shark[2] >= graph[mx][my] :
+                visited[mx][my] = True
+                maps[mx][my] = d+1
+                q.append((mx, my, d+1))
 
+    return maps
 
-cnt = 0
-result = 0
-while 1:
-    shark = biteFish(x,y,size)
-    # 더 이상 먹을 수 있는 물고기가 공간에 없다면 아기 상어는 엄마 상어에게 도움을 요청한다.
-    if len(shark) == 0:
+while True in aliive_fishes :
+
+    num_fish, need_time = find_eat()
+    # print("i find fish : ", num_fish, need_time)
+    # 먹을수 있는 물고기가 없는 경우
+    if num_fish == -1 :
         break
-    # 거리가 가까운 물고기가 많다면, 가장 위에 있는 물고기, 그러한 물고기가 여러마리라면, 가장 왼쪽에 있는 물고기를 먹는다.
-    # 정렬한 결과를 반영해준다.
-    nx,ny,dist =shark.pop()
-    
-    #움직이는 칸수가 곧 시간이 된다.
-    result += dist
-    graph[x][y],graph[nx][ny] = 0,0
-    #상어좌표를 먹은 물고기 좌표로 옮겨준다.
-    x,y = nx,ny
-    cnt += 1
-    if cnt == size:
-        size += 1
-        cnt = 0
-print(result)
+    else :
+        now, target = (shark[0], shark[1]), (fishes[num_fish][0], fishes[num_fish][1])
+
+        time = time + need_time
+        aliive_fishes[num_fish] = False
+        graph[fishes[num_fish][0]][fishes[num_fish][1]] = 0
+        # 상어 위치 초기화
+        shark[0] = fishes[num_fish][0]
+        shark[1] = fishes[num_fish][1]
+        # 잡아먹기
+        shark[3] = shark[3] - 1
+        # 먹고 필요 숫자 만큼 먹은 경우 상어 크기 키우기 and 필요 갯수 초기화
+        if shark[3] == 0 :
+            shark[2] = shark[2] + 1
+            shark[3] = shark[2]
+
+            # print("shark", shark)
+
+print(time)
