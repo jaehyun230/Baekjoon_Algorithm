@@ -1,63 +1,73 @@
 import copy
 import sys
 
-input = sys.stdin.readline
+sys.setrecursionlimit(10**6)
 
-n, m = map(int, input().split())
+n, m = map(int ,input().split())
 
-graph = [list(map(int, input().split())) for _ in range(n)]
+graph = []
+CCTV = []
 
-# 감시카메라 종류에 따른 방향
-modes = [[], [[0], [1], [2], [3]], [[0, 2], [1, 3]],
-         [[0, 1], [1, 2], [2, 3], [0, 3]],
-         [[0, 1, 2], [1, 2, 3], [0, 2, 3], [0, 1, 3]], [[0, 1, 2, 3]]]
+for _ in range(n) :
+    graph.append(list(map(int, input().split())))
 
-# 북 동 남 서
+for i in range(n) :
+    for j in range(m) :
+        if graph[i][j] != 0 and graph[i][j] != 6 :
+            CCTV.append((i, j, graph[i][j]))
+
+
 dx = [-1, 0, 1, 0]
 dy = [0, 1, 0, -1]
 
+modes = [[],
+         [[0], [1], [2], [3]],
+         [[0, 2], [1, 3]],
+         [[0, 1], [1, 2], [2, 3], [3, 0]],
+         [[0, 1, 2], [1, 2, 3], [2, 3, 0], [3, 0, 1]],
+         [[0, 1, 2, 3]]
+         ]
 
-# 감시구간
-def search(board, mode, x, y):
-    for i in mode:
-        mx = x
-        my = y
-        while True:
-            mx += dx[i]
-            my += dy[i]
-            if 0 <= mx < n and 0 <= my < m:
-                if board[mx][my] == 6:
-                    break
-                if board[mx][my] == 0:
-                    board[mx][my] = 7
-            else:
-                break
 
-cctv = []
+answer = (n+1) * (m+1)
 
-for i in range(n) :
-  for j in range(m) :
-    if  1 <= graph[i][j] <= 5 :
-      cctv.append([graph[i][j], i, j])
+def search(a, b, d, arr) :
+    x, y = a, b
+    for k in range(max(n, m)) :
+        x = x + dx[d]
+        y = y + dy[d]
+        if 0<= x < n and 0 <= y < m and arr[x][y] != 6 :
+            if arr[x][y] == 0 :
+                arr[x][y] = -1
+        else :
+            break
 
-def dfs(depth, arr) :
-  global answer
-
-  if depth == len(cctv) :
+def calculate(arr) :
+    global answer
     count = 0
     for i in range(n) :
-      count +=arr[i].count(0)
+        for j in range(m) :
+            if arr[i][j] == 0 :
+                count +=1
+
     answer = min(answer, count)
-    return
+def dfs(idx, arr) :
 
-  temp = copy.deepcopy(arr)
+    if idx == len(CCTV) :
+        calculate(arr)
+        return
 
-  cctv_mode, x, y = cctv[depth]
-  for i in modes[cctv_mode]:
-    search(temp, i, x, y)
-    dfs(depth+1, temp)
+    x, y, type = CCTV[idx]
     temp = copy.deepcopy(arr)
 
-answer = int(1e9)
+    for i in modes[type] :
+        for j in i :
+            search(x, y, j, temp)
+        dfs(idx+1, temp)
+        temp = copy.deepcopy(arr)
+
+    return
+
 dfs(0, graph)
+
 print(answer)
