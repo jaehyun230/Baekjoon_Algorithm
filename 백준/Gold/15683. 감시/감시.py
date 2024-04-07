@@ -1,7 +1,5 @@
 import copy
-import sys
 
-sys.setrecursionlimit(10**6)
 
 n, m = map(int ,input().split())
 
@@ -28,9 +26,7 @@ modes = [[],
          [[0, 1, 2, 3]]
          ]
 
-
 answer = (n+1) * (m+1)
-
 def search(a, b, d, arr) :
     x, y = a, b
     for k in range(max(n, m)) :
@@ -41,7 +37,6 @@ def search(a, b, d, arr) :
                 arr[x][y] = -1
         else :
             break
-
 def calculate(arr) :
     global answer
     count = 0
@@ -65,8 +60,6 @@ def dfs(idx, arr) :
             search(x, y, j, temp)
         dfs(idx+1, temp)
         temp = copy.deepcopy(arr)
-
-    return
 
 dfs(0, graph)
 
